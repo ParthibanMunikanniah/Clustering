@@ -1,0 +1,51 @@
+mydata <- read.csv(file.choose())
+attach(mydata)
+
+library(data.table)
+table(is.na(mydata))
+library(Amelia)
+missmap(mydata, main = "Missing values vs observed")
+
+#finding NA in columnwise
+library(LaF)
+sapply(mydata,function(x)sum(is.na(x)))
+mydata <- subset(na.omit(mydata))         
+
+
+#Normalising data
+normalised_data <- scale(mydata[,2:17])
+install.packages("caret")
+library(caret)
+
+#Distance Matrix
+d <- dist(normalised_data, method = "euclidean")
+d
+fit <- hclust(d, method = 'complete')
+plot(fit)
+
+fit1 <- hclust(d, method = 'single')
+plot(fit1, hang = 1)
+rect.hclust(fit, h = 3)
+groups <- cutree(fit, k=5)
+groups <- cutree(fit, h=5)
+groups
+
+
+first_100 <- normalised_data[100, ]
+is.data.frame(first_100)
+is.double(first_100)
+as.data.frame(first_100)
+sapply(first_100[ , ], as.data.frame)
+
+
+n <- dist(first_100, method = "euclidean")
+n
+fit <- hclust(n, method = 'complete')
+plot(fit)
+plot(fit, hang = 1)
+
+
+rect.hclust(fit, h = 5, border = 'red')
+groups <- cutree(fit, k=2)
+groups <- cutree(fit, h=5)
+groups
